@@ -1,4 +1,4 @@
-# Gestión de Productos (Spring Boot showcase)#
+# Gestión de Productos (Spring Boot showcase)
 
 ## _links de interés_
 
