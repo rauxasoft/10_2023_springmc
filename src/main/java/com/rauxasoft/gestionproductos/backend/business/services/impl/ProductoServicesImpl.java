@@ -3,6 +3,7 @@ package com.rauxasoft.gestionproductos.backend.business.services.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.TreeMap;
 
 import org.springframework.stereotype.Service;
@@ -33,8 +34,8 @@ public class ProductoServicesImpl implements ProductoServices {
 	}
 
 	@Override
-	public Producto read(Long id) {
-		return PRODUCTOS.get(id);
+	public Optional<Producto> read(Long id) {
+		return Optional.ofNullable(PRODUCTOS.get(id));
 	}
 
 	@Override

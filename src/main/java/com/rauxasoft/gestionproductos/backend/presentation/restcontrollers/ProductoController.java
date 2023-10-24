@@ -1,6 +1,7 @@
 package com.rauxasoft.gestionproductos.backend.presentation.restcontrollers;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +24,8 @@ public class ProductoController {
 	
 	@GetMapping("/productos/{id}")
 	public Producto read(@PathVariable Long id) {
-		return productoServices.read(id);
+		Optional<Producto> optional = productoServices.read(id);
+		return optional.orElse(null);
 	}
 	
 }
