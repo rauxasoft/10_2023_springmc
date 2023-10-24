@@ -4,12 +4,15 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rauxasoft.gestionproductos.backend.business.model.Producto;
 import com.rauxasoft.gestionproductos.backend.business.services.ProductoServices;
+import com.rauxasoft.gestionproductos.backend.presentation.config.RespuestaError;
 
 @RestController
 public class ProductoController {
@@ -21,11 +24,17 @@ public class ProductoController {
 	public List<Producto> getAll(){
 		return productoServices.getAll();
 	}
-	
+
 	@GetMapping("/productos/{id}")
-	public Producto read(@PathVariable Long id) {
+	public ResponseEntity<?> read(@PathVariable Long id) {
+		
 		Optional<Producto> optional = productoServices.read(id);
-		return optional.orElse(null);
+		
+		if (optional.isEmpty()) {
+			RespuestaError respuestaError = new RespuestaError("No se encuentra el producto con id " + id);
+			return new ResponseEntity<>(respuestaError, HttpStatus.NOT_FOUND);
+		}
+		
+		return ResponseEntity.ok(optional.get());
 	}
-	
 }
