@@ -12,13 +12,23 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class GestiorCentralizadoExcepciones extends ResponseEntityExceptionHandler {
 	
+	// ************************************************************************************************************
+	
 	@ExceptionHandler(Exception.class)
 	protected ResponseEntity<?> handleGenericException(Exception ex, WebRequest request){
 		RespuestaError respuestaError = new RespuestaError(ex.getMessage());
 		return handleExceptionInternal(ex, respuestaError, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
 	}
 	
-	// *************************************************************************************************************************
+	// ************************************************************************************************************
+	
+	@ExceptionHandler(PresentationException.class)
+	protected ResponseEntity<?> handlePresentationException(PresentationException ex, WebRequest request){
+		RespuestaError respuestaError = new RespuestaError(ex.getMessage());
+		return handleExceptionInternal(ex, respuestaError, new HttpHeaders(), ex.getHttpStatus(), request);
+	}
+	
+	// ************************************************************************************************************
 
 	@Override
 	protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
@@ -30,5 +40,9 @@ public class GestiorCentralizadoExcepciones extends ResponseEntityExceptionHandl
 		RespuestaError respuestaError = new RespuestaError("El parámetro " + valor + " es de tipo " + tipoEntrante + ". No se puede parsear a " + tipoRequerido);
 		return handleExceptionInternal(ex, respuestaError, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
 	}
+	
+	// ************************************************************************************************************
+	
+	
 
 }
