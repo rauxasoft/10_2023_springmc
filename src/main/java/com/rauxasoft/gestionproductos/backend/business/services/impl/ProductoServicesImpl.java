@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,10 @@ public class ProductoServicesImpl implements ProductoServices {
 	@Override
 	public Long create(Producto producto) {
 		
+		if(producto.getId() != null) {
+			throw new IllegalStateException("No se puede crear un producto con código not null");
+		}
+		
 		Long id = PRODUCTOS.lastKey() + 1;
 		
 		producto.setId(id);
@@ -37,12 +42,50 @@ public class ProductoServicesImpl implements ProductoServices {
 	public Optional<Producto> read(Long id) {
 		return Optional.ofNullable(PRODUCTOS.get(id));
 	}
+	
+	@Override
+	public void update(Producto producto) {
+		
+		Long id = producto.getId();
+		
+		if(id != null) {
+			throw new IllegalStateException("No se puede actualizar un producto con código not null");
+		}
+		
+		boolean existe = PRODUCTOS.containsKey(id);
+		
+		if(!existe) {
+			throw new IllegalStateException("El producto con código " + id + " no existe. No se puede actualizar.");
+		}
+		
+		PRODUCTOS.replace(id, producto);
+		
+	}
 
+	@Override
+	public void delete(Long id) {
+		
+		boolean existe = PRODUCTOS.containsKey(id);
+		
+		if(!existe) {
+			throw new IllegalStateException("El producto con código " + id + " no existe. No se puede eliminar.");
+		}
+		
+	}
+	
 	@Override
 	public List<Producto> getAll() {
 		return new ArrayList<>(PRODUCTOS.values());
 	}
-	
+
+	@Override
+	public List<Producto> getBetweenPriceRange(double min, double max) {
+		
+		return PRODUCTOS.values().stream()
+				.filter(x -> x.getPrecio() >= min && x.getPrecio() <= max)
+				.collect(Collectors.toList());
+	}
+
 	// ***************************************************************
 	//
 	// Private Methods
@@ -84,4 +127,5 @@ public class ProductoServicesImpl implements ProductoServices {
 		PRODUCTOS.put(p3.getId(), p3);
 		
 	}
+
 }
