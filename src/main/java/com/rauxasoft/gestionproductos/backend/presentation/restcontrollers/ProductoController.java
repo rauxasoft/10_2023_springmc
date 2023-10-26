@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,10 +28,6 @@ public class ProductoController {
 	@GetMapping("/productos/{id}")
 	public ResponseEntity<?> read(@PathVariable Long id) {
 		
-		if(id > 500) {
-			throw new RuntimeException("El número " + id + " no es válido.");
-		}
-		
 		Optional<Producto> optional = productoServices.read(id);
 		
 		if (optional.isEmpty()) {
@@ -41,22 +36,6 @@ public class ProductoController {
 		}
 		
 		return ResponseEntity.ok(optional.get());
-	}
-	
-	// ****************************************************
-	//
-	// Gestión de excepciones
-	//
-	// ****************************************************
-	
-	@ExceptionHandler({IllegalArgumentException.class, ClassCastException.class})
-	public ResponseEntity<?> gestor1(Exception e){
-		return ResponseEntity.badRequest().body(new RespuestaError(e.getMessage()));
-	}
-	
-	@ExceptionHandler(Exception.class)
-	public ResponseEntity<?> gestor2(Exception e){
-		return ResponseEntity.badRequest().body(new RespuestaError(e.getMessage()));
 	}
 	
 }
