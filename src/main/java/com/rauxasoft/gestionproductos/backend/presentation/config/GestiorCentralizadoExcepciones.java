@@ -4,6 +4,7 @@ import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -11,8 +12,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @ControllerAdvice
 public class GestiorCentralizadoExcepciones extends ResponseEntityExceptionHandler {
-	
-	// ************************************************************************************************************
 	
 	@ExceptionHandler(Exception.class)
 	protected ResponseEntity<?> handleGenericException(Exception ex, WebRequest request){
@@ -22,6 +21,16 @@ public class GestiorCentralizadoExcepciones extends ResponseEntityExceptionHandl
 	
 	// ************************************************************************************************************
 	
+	@Override
+	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+		
+		// TODO modificar mensaje standard en ingles....
+		RespuestaError respuestaError = new RespuestaError(ex.getMessage());
+		return handleExceptionInternal(ex, respuestaError, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+	}
+	
+	// ************************************************************************************************************
+
 	@ExceptionHandler(PresentationException.class)
 	protected ResponseEntity<?> handlePresentationException(PresentationException ex, WebRequest request){
 		RespuestaError respuestaError = new RespuestaError(ex.getMessage());

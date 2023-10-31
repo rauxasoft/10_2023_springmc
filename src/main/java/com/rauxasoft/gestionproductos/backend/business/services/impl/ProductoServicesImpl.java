@@ -48,7 +48,7 @@ public class ProductoServicesImpl implements ProductoServices {
 		
 		Long id = producto.getId();
 		
-		if(id != null) {
+		if(id == null) {
 			throw new IllegalStateException("No se puede actualizar un producto con código not null");
 		}
 		
@@ -71,6 +71,7 @@ public class ProductoServicesImpl implements ProductoServices {
 			throw new IllegalStateException("El producto con código " + id + " no existe. No se puede eliminar.");
 		}
 		
+		PRODUCTOS.remove(id);
 	}
 	
 	@Override
