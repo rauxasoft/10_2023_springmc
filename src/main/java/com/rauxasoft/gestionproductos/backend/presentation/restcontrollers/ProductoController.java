@@ -48,6 +48,8 @@ public class ProductoController {
 		return productos;
 	}
 
+	// PREGUNTA JOSEP MARIA !!!!!!!!!
+	
 	// http://localhost:8080/productos/144523
 	
 	@GetMapping("/{id}")
