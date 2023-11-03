@@ -47,8 +47,6 @@ public class ProductoController {
 			
 		return productos;
 	}
-
-	// PREGUNTA JOSEP MARIA !!!!!!!!!
 	
 	// http://localhost:8080/productos/144523
 	
@@ -66,6 +64,8 @@ public class ProductoController {
 	
 	@PostMapping
 	public ResponseEntity<?> create(@RequestBody Producto producto, UriComponentsBuilder ucb) {
+		
+		// A ver si el test lo detecta...
 		
 		Long codigo = productoServices.create(producto);
 		
@@ -97,5 +97,5 @@ public class ProductoController {
 		}
 		
 	}
-	
+
 }
