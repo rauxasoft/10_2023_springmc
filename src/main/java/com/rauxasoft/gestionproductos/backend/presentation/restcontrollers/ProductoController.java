@@ -29,10 +29,7 @@ public class ProductoController {
 
 	@Autowired
 	private ProductoServices productoServices;
-	
-	// http://localhost:8080/productos
-	// http://localhost:8080/productos?min=100&max=1000
-	
+		
 	@GetMapping
 	public List<Producto> getAll(@RequestParam(name = "min", required = false) Double min, 
 								 @RequestParam(name = "max", required = false) Double max){
@@ -47,16 +44,14 @@ public class ProductoController {
 			
 		return productos;
 	}
-	
-	// http://localhost:8080/productos/144523
-	
+		
 	@GetMapping("/{id}")
 	public Producto read(@PathVariable Long id) {
 		
 		Optional<Producto> optional = productoServices.read(id);
 		
 		if(optional.isEmpty()) {
-			throw new PresentationException("No se encuentra el producto con código " + id, HttpStatus.NOT_FOUND);
+			throw new PresentationException("No se encuentra el producto con id " + id, HttpStatus.NOT_FOUND);
 		}
 		
 		return optional.get();
@@ -65,9 +60,13 @@ public class ProductoController {
 	@PostMapping
 	public ResponseEntity<?> create(@RequestBody Producto producto, UriComponentsBuilder ucb) {
 		
-		// A ver si el test lo detecta...
+		Long codigo = null;
 		
-		Long codigo = productoServices.create(producto);
+		try {
+			codigo = productoServices.create(producto);
+		} catch(IllegalStateException e) {
+			throw new PresentationException(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
 		
 		URI uri = ucb.path("/productos/{codigo}").build(codigo);
 		
@@ -81,7 +80,7 @@ public class ProductoController {
 		try {
 			productoServices.delete(id);
 		} catch(IllegalStateException e) {
-			throw new PresentationException("No se encuentra el producto con código [" + id + "]. No se ha podido eliminar.", HttpStatus.NOT_FOUND);
+			throw new PresentationException("No se encuentra el producto con id [" + id + "]. No se ha podido eliminar.", HttpStatus.NOT_FOUND);
 		}
 		
 	}
