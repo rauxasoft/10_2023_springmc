@@ -1,0 +1,15 @@
+-- https://www.h2database.com/html/grammar.html
+
+CREATE TABLE PRODUCTOS (
+
+	ID				BIGINT			NOT NULL,
+	NOMBRE			VARCHAR(150)	,
+	DESCRIPCION		VARCHAR(250)	,
+	PRECIO			DOUBLE			,
+	FAMILIA			VARCHAR(10)		,
+	FECHA_ALTA		DATE			,
+	DESCATALOGADO	BOOLEAN			,
+	
+	PRIMARY KEY (ID)
+
+);
