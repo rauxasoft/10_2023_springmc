@@ -3,15 +3,32 @@ package com.rauxasoft.gestionproductos.backend.business.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+@Entity
+@Table(name="PRODUCTOS")
 public class Producto implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
+	@Id
 	private Long id;
+	
 	private String nombre;
 	private String descripcion;
 	private Double precio;
+	
+	@Enumerated(EnumType.STRING)
 	private Familia familia;
+	
+	@Temporal(TemporalType.DATE)
 	private Date fechaAlta;
+	
 	private boolean descatalogado;
 	
 	public Producto() {
