@@ -6,7 +6,6 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import com.rauxasoft.gestionproductos.backend.business.model.Producto;
@@ -14,27 +13,49 @@ import com.rauxasoft.gestionproductos.backend.business.services.ProductoServices
 import com.rauxasoft.gestionproductos.backend.integration.repositores.ProductoRepository;
 
 @Service
-@Primary
 public class ProductoServicesImpl implements ProductoServices{
 
 	@Autowired
 	private ProductoRepository productoRepository;
 	
 	@Override
+	@Transactional
 	public Long create(Producto producto) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		if(producto.getId() != null) {
+			throw new IllegalStateException("No se puede crear un producto con código not null");
+		}
+		
+		Long id = System.currentTimeMillis();
+		producto.setId(id);
+		
+		productoRepository.save(producto);
+		
+		return id;
 	}
 
 	@Override
-	public Optional<Producto> read(Long id) {
-		// TODO Auto-generated method stub
-		return Optional.empty();
+	public Optional<Producto> read(Long id) {	
+		return productoRepository.findById(id);
 	}
 
 	@Override
+	@Transactional
 	public void update(Producto producto) {
-		// TODO Auto-generated method stub	
+		
+		Long id = producto.getId();
+		
+		if(id == null) {
+			throw new IllegalStateException("No se puede actualizar un producto con código not null");
+		}
+		
+		boolean existe = productoRepository.existsById(id);
+		
+		if(!existe) {
+			throw new IllegalStateException("El producto con código " + id + " no existe. No se puede actualizar.");
+		}
+		
+		productoRepository.save(producto);
 	}
 
 	@Override
@@ -50,8 +71,7 @@ public class ProductoServicesImpl implements ProductoServices{
 
 	@Override
 	public List<Producto> getBetweenPriceRange(double min, double max) {
-		// TODO Auto-generated method stub
-		return null;
+		return productoRepository.findByPrecioBetweenOrderByPrecioAsc(min, max);
 	}
 
 }
