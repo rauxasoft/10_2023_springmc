@@ -50,7 +50,7 @@ public class ProductoController {
 		
 		Optional<Producto> optional = productoServices.read(id);
 		
-		if(optional.isEmpty()) {
+		if(!optional.isPresent()) {
 			throw new PresentationException("No se encuentra el producto con id " + id, HttpStatus.NOT_FOUND);
 		}
 		

@@ -4,9 +4,11 @@
 
 http://localhost:8081/swagger-ui.html
 
-## _links de interés_
+## _acceso a la consola de H2_
 
+http://localhost:8080/h2-console
 
+(las credenciales y parámetros de conexión según se indiquen en application.properties
 
 ## _glosario de términos_
 
