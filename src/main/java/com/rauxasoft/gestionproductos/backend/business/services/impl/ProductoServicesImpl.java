@@ -4,22 +4,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import com.rauxasoft.gestionproductos.backend.integration.model.ProductoPL;
 
 import javax.transaction.Transactional;
 
+import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.rauxasoft.gestionproductos.backend.business.model.Familia;
 import com.rauxasoft.gestionproductos.backend.business.model.Producto;
 import com.rauxasoft.gestionproductos.backend.business.services.ProductoServices;
-import com.rauxasoft.gestionproductos.backend.integration.repositores.ProductoRepository;
+import com.rauxasoft.gestionproductos.backend.integration.repositores.ProductoPLRepository;
 
 @Service
 public class ProductoServicesImpl implements ProductoServices{
 
 	@Autowired
-	private ProductoRepository productoRepository;
+	private ProductoPLRepository productoPLRepository;
+	
+	@Autowired
+	private DozerBeanMapper mapper;
 	
 	@Override
 	@Transactional
@@ -32,14 +39,25 @@ public class ProductoServicesImpl implements ProductoServices{
 		Long id = System.currentTimeMillis();
 		producto.setId(id);
 		
-		productoRepository.save(producto);
+		ProductoPL productoPL = mapper.map(producto, ProductoPL.class);
+		
+		productoPLRepository.save(productoPL);
 		
 		return id;
 	}
 
 	@Override
 	public Optional<Producto> read(Long id) {	
-		return productoRepository.findById(id);
+		
+		Optional<ProductoPL> optional = productoPLRepository.findById(id);
+		
+		Producto producto = null;
+		
+		if(optional.isPresent()) {
+			producto = mapper.map(optional.get(), Producto.class);
+		}
+		
+		return Optional.ofNullable(producto);
 	}
 
 	@Override
@@ -52,57 +70,65 @@ public class ProductoServicesImpl implements ProductoServices{
 			throw new IllegalStateException("No se puede actualizar un producto con código not null");
 		}
 		
-		boolean existe = productoRepository.existsById(id);
+		boolean existe = productoPLRepository.existsById(id);
 		
 		if(!existe) {
 			throw new IllegalStateException("El producto con código " + id + " no existe. No se puede actualizar.");
 		}
 		
-		productoRepository.save(producto);
+		ProductoPL productoPL = mapper.map(producto, ProductoPL.class);
+		
+		productoPLRepository.save(productoPL);
 	}
 
 	@Override
 	@Transactional
 	public void delete(Long id) {
-		productoRepository.deleteById(id);
+		productoPLRepository.deleteById(id);
 	}
 
 	@Override
 	public List<Producto> getAll() {
-		return productoRepository.findAll();
+		return convert(productoPLRepository.findAll());
 	}
 
 	@Override
 	public List<Producto> getBetweenPriceRange(double min, double max) {
-		return productoRepository.findByPrecioBetweenOrderByPrecioAsc(min, max);
+		return convert(productoPLRepository.findByPrecioBetweenOrderByPrecioAsc(min, max));
 	}
 
 	@Override
 	public List<Producto> getDescatalogados() {
-		return productoRepository.findByDescatalogadoTrue();
+		return convert(productoPLRepository.findByDescatalogadoTrue());
 	}
 
 	@Override
 	public List<Producto> getByNombreLikeIgnoreCase(String texto) {
-		return productoRepository.findByNombroLikeIgnoreCase(texto);
+		return convert(productoPLRepository.findByNombroLikeIgnoreCase(texto));
 	}
 
 	@Override
 	@Transactional
 	public void incrementarPrecios(List<Producto> productos, double porcentaje) {
-		productoRepository.incrementarPrecios(productos, porcentaje);
+		
+		List<ProductoPL> productosPL = productos.stream()
+										.map(x -> mapper.map(x, ProductoPL.class))
+										.collect(Collectors.toList());
+		
+		productoPLRepository.incrementarPrecios(productosPL, porcentaje);
+		
 	}
 
 	@Override
 	@Transactional
 	public void incrementarPrecios(Long[] idsProducto, double porcentaje) {
-		productoRepository.incrementarPrecios(idsProducto, porcentaje);
+		productoPLRepository.incrementarPrecios(idsProducto, porcentaje);
 	}
 
 	@Override
 	public Map<Familia, Integer> getEstadisticaNumeroProductosPorFamilia() {
 		
-		List<Object[]> resultSet = productoRepository.getEstadisticaNumeroProductosByCategoria();
+		List<Object[]> resultSet = productoPLRepository.getEstadisticaNumeroProductosByCategoria();
 		
 		Map<Familia, Integer> estadistica = new HashMap<>();
 		
@@ -118,7 +144,7 @@ public class ProductoServicesImpl implements ProductoServices{
 	@Override
 	public Map<Familia, Double> getEstadisticaPrecioMedioProductosPorFamilia() {
 		
-		List<Object[]> resultSet = productoRepository.getEstadisticaPrecioMedioProductosByCategoria();
+		List<Object[]> resultSet = productoPLRepository.getEstadisticaPrecioMedioProductosByCategoria();
 		
 		Map<Familia, Double> estadistica = new HashMap<>();
 		
@@ -129,6 +155,19 @@ public class ProductoServicesImpl implements ProductoServices{
 		}
 		
 		return estadistica;
+	}
+	
+	// **************************************************************
+	//
+	// Private Methods
+	//
+	// **************************************************************
+	
+	private List<Producto> convert(List<ProductoPL> productosPL){
+		
+		return productosPL.stream()
+				.map(x -> mapper.map(x, Producto.class))
+				.collect(Collectors.toList());
 	}
 
 }

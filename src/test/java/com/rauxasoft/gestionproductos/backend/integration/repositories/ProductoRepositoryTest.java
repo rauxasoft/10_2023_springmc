@@ -12,22 +12,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.jdbc.Sql;
 
-import com.rauxasoft.gestionproductos.backend.business.model.Familia;
-import com.rauxasoft.gestionproductos.backend.business.model.Producto;
 import com.rauxasoft.gestionproductos.backend.business.model.dtos.Producto1DTO;
-import com.rauxasoft.gestionproductos.backend.integration.repositores.ProductoRepository;
+import com.rauxasoft.gestionproductos.backend.integration.model.FamiliaPL;
+import com.rauxasoft.gestionproductos.backend.integration.model.ProductoPL;
+import com.rauxasoft.gestionproductos.backend.integration.repositores.ProductoPLRepository;
 
 @DataJpaTest
 @Sql(scripts= {"/data/h2/schema_test.sql","/data/h2/data_test.sql"})
 public class ProductoRepositoryTest {
 
 	@Autowired
-	private ProductoRepository productoRepository;
+	private ProductoPLRepository productoPLRepository;
 	
-	private Producto producto1;
-	private Producto producto2;
-	private Producto producto3;
-	private Producto producto4;
+	private ProductoPL producto1;
+	private ProductoPL producto2;
+	private ProductoPL producto3;
+	private ProductoPL producto4;
 	
 	@BeforeEach
 	void init() {
@@ -37,29 +37,29 @@ public class ProductoRepositoryTest {
 	@Test
 	void obtenemos_productos_entre_rango_de_precios_en_orden_ascendente() {
 		
-		List<Producto> productos = productoRepository.findByPrecioBetweenOrderByPrecioAsc(20.0, 500.0);
+		List<ProductoPL> productosPL = productoPLRepository.findByPrecioBetweenOrderByPrecioAsc(20.0, 500.0);
 		
-		assertEquals(2, productos.size());
+		assertEquals(2, productosPL.size());
 			
-		assertTrue(producto4.equals(productos.get(0)));
-		assertTrue(producto1.equals(productos.get(1)));
+		assertTrue(producto4.equals(productosPL.get(0)));
+		assertTrue(producto1.equals(productosPL.get(1)));
 		
 	}
 	
 	@Test
 	void obtenermos_productos_descatalogados_por_familia() {
 		
-		List<Producto> productos = productoRepository.findDescatalogadosByFamilia(Familia.HARDWARE);
+		List<ProductoPL> productosPL = productoPLRepository.findDescatalogadosByFamilia(FamiliaPL.HARDWARE);
 		
-		assertEquals(1, productos.size());
+		assertEquals(1, productosPL.size());
 		
-		assertTrue(producto2.equals(productos.get(0)));
+		assertTrue(producto2.equals(productosPL.get(0)));
 	}
 	
 	@Test
 	void obtenemos_todos_los_Producto1DTO() {
 		
-		List<Producto1DTO> productos1DTO = productoRepository.getAllProducto1DTO();
+		List<Producto1DTO> productos1DTO = productoPLRepository.getAllProducto1DTO();
 		
 		for(Producto1DTO producto1DTO: productos1DTO) {
 			System.err.println(producto1DTO);
@@ -74,10 +74,10 @@ public class ProductoRepositoryTest {
 	
 	private void initObjects() {
 		
-		producto1 = new Producto();
-		producto2 = new Producto();
-		producto3 = new Producto();
-		producto4 = new Producto();
+		producto1 = new ProductoPL();
+		producto2 = new ProductoPL();
+		producto3 = new ProductoPL();
+		producto4 = new ProductoPL();
 		
 		producto1.setId(100L);
 		producto2.setId(101L);

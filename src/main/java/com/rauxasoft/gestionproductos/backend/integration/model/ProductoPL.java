@@ -1,20 +1,38 @@
-package com.rauxasoft.gestionproductos.backend.business.model;
+package com.rauxasoft.gestionproductos.backend.integration.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
-public class Producto implements Serializable {
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+@Entity
+@Table(name="PRODUCTOS")
+public class ProductoPL implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
+
+	@Id
 	private Long id;
+	
 	private String nombre;
 	private String descripcion;
 	private Double precio;
-	private Familia familia;
+	
+	@Enumerated(EnumType.STRING)
+	private FamiliaPL familia;
+	
+	@Temporal(TemporalType.DATE)
 	private Date fechaAlta;
+	
 	private boolean descatalogado;
 	
-	public Producto() {
+	public ProductoPL() {
 		
 	}
 
@@ -50,11 +68,11 @@ public class Producto implements Serializable {
 		this.precio = precio;
 	}
 
-	public Familia getFamilia() {
+	public FamiliaPL getFamilia() {
 		return familia;
 	}
 
-	public void setFamilia(Familia familia) {
+	public void setFamilia(FamiliaPL familia) {
 		this.familia = familia;
 	}
 
@@ -76,10 +94,7 @@ public class Producto implements Serializable {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		return result;
+		return Objects.hash(id);
 	}
 
 	@Override
@@ -90,19 +105,14 @@ public class Producto implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Producto other = (Producto) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		return true;
+		ProductoPL other = (ProductoPL) obj;
+		return Objects.equals(id, other.id);
 	}
 
 	@Override
 	public String toString() {
-		return "Producto [id=" + id + ", nombre=" + nombre + ", descripcion=" + descripcion + ", precio=" + precio
+		return "ProductoPL [id=" + id + ", nombre=" + nombre + ", descripcion=" + descripcion + ", precio=" + precio
 				+ ", familia=" + familia + ", fechaAlta=" + fechaAlta + ", descatalogado=" + descatalogado + "]";
 	}
-	
+
 }
