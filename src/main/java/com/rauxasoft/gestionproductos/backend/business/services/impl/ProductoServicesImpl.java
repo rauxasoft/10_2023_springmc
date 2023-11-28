@@ -19,14 +19,17 @@ import com.rauxasoft.gestionproductos.backend.business.model.Producto;
 import com.rauxasoft.gestionproductos.backend.business.services.ProductoServices;
 import com.rauxasoft.gestionproductos.backend.integration.repositores.ProductoPLRepository;
 
-@Service
+@Service("bartolo")
 public class ProductoServicesImpl implements ProductoServices{
 
-	@Autowired
 	private ProductoPLRepository productoPLRepository;
+	private DozerBeanMapper mapper;
 	
 	@Autowired
-	private DozerBeanMapper mapper;
+	public ProductoServicesImpl(ProductoPLRepository productoPLRepository, DozerBeanMapper mapper) {
+		this.productoPLRepository = productoPLRepository;
+		this.mapper = mapper;
+	}
 	
 	@Override
 	@Transactional

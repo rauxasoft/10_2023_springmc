@@ -19,7 +19,7 @@ import com.rauxasoft.gestionproductos.backend.integration.repositores.ProductoPL
 
 @DataJpaTest
 @Sql(scripts= {"/data/h2/schema_test.sql","/data/h2/data_test.sql"})
-public class ProductoRepositoryTest {
+class ProductoRepositoryTest {
 
 	@Autowired
 	private ProductoPLRepository productoPLRepository;

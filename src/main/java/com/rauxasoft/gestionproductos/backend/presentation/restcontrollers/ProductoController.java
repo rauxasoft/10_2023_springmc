@@ -4,6 +4,8 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +29,8 @@ import com.rauxasoft.gestionproductos.backend.presentation.config.PresentationEx
 @RequestMapping("/productos")
 public class ProductoController {
 
+	private Logger logger = LoggerFactory.getLogger("ProductoController");
+	
 	@Autowired
 	private ProductoServices productoServices;
 		
@@ -37,8 +41,10 @@ public class ProductoController {
 		List<Producto> productos = null;
 		
 		if(min != null && max != null) {
+			logger.info("getAll() desde: {} hasta: {}", min, max);
 			productos = productoServices.getBetweenPriceRange(min, max);
 		} else {
+			logger.info("getAll()");
 			productos = productoServices.getAll();
 		}
 			
@@ -51,8 +57,11 @@ public class ProductoController {
 		Optional<Producto> optional = productoServices.read(id);
 		
 		if(!optional.isPresent()) {
+			logger.error("No se encuentra el producto con id {}", id);
 			throw new PresentationException("No se encuentra el producto con id " + id, HttpStatus.NOT_FOUND);
 		}
+		
+		logger.info("read({})", id);
 		
 		return optional.get();
 	}
